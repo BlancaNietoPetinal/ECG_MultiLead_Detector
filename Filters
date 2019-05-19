@@ -1,0 +1,63 @@
+from scipy import signal
+import numpy as np
+import matplotlib.pyplot as plt
+#load the file
+ecg = np.loadtxt('ecg_2leads.txthttps://github.com/BlancaNietoPetinal/ECG_MultiLead_Detector',delimiter =' ')
+
+ecg1 = ecg[:,0]
+ecg2 = ecg[:,1]
+
+
+#--------------------------------------------------First Filter: Band-Pass Filter---------------------------------------------------------
+
+t = np.arange (0, len(ecg))/fs 
+f1,f2 = 11,25
+fs = 128
+N = 128 #number of coefficients
+b = signal.firwin(N, [f1/(fs/2), f2/(fs/2)], pass_zero = False) #Get the coefficients
+
+#apply filter
+ecg1_bp = signal.filtfilt(b,np.arange(1,2),ecg1) 
+ecg2_bp = signal.filtfilt(b,np.arange(1,2),ecg2)
+
+#plot
+plt.figure()
+plt.plot(t[:128*5],ecg1_bp[:128*5])
+plt.title("Second lead filtered with a Band-Pass Filter")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
+
+plt.figure()
+plt.plot(t[:128*5],ecg2_bp[:128*5])
+plt.title("Second lead filtered with a Band-Pass Filter")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
+
+#-----------------------------------------------------Second Filter: Non-Linear Filter ----------------------------------------------------
+
+
+ecg1_bp_2 = ecg1_bp**2
+ecg2_bp_2 = ecg2_bp**2
+
+#Adding both leads
+
+ecg_multi = ecg1_bp**2 + ecg2_bp**2
+plt.figure()
+plt.plot(t[0:128*5],ecg_multi[0:128*5])
+plt.title("ECG MultiLead filtered with a Non-Linear Filter")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
+
+#----------------------------------------------------Third Filter: Integer Filter ------------------------------------------------------
+
+integration_window = 11 #number of points of the window
+
+integ_multi = np.convolve(ecg_multi, np.ones(integration_window)) #convolution
+
+#plot
+plt.figure()
+plt.plot(t[0:128*5],integ_multi[0:128*5])
+plt.title("ECG MultiLead Filtered with Integer Filter")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
+
