@@ -1,0 +1,30 @@
+window = 1000
+#-----------------------------------------PLOTTING FIRST CHANNEL ---------------------------------------------------------------
+defl = correction(ecg1,maxim2[0],window)
+
+correct_max = []
+for i in range(6):
+    correct_max += [maxim2[i]-defl]
+
+
+plt.figure()
+plt.plot(t[:128*5],ecg[:128*5,0])
+plt.plot(t[correct_max[0:6]],ecg1[correct_max[0:6]],'ro')
+plt.title("First Lead + Detected Points")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
+
+#------------------------------------------PLOTTING SECOND CHANNEL------------------------------------------------------------------
+
+defl = correction(ecg2,maxim2[1],window)
+
+correct_max = []
+for i in range(6):
+    correct_max += [maxim2[i]-defl]
+
+plt.figure() #plot second channel
+plt.plot(t[:128*5],ecg[:128*5,1])
+plt.plot(t[correct_max[0:6]],ecg2[correct_max[0:6]],'ro')
+plt.title("Second Lead + Detection Points")
+plt.xlabel('Time (s)')
+plt.ylabel('mV')
