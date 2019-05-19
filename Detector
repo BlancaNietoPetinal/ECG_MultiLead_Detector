@@ -1,0 +1,26 @@
+plt.figure()
+plt.plot(t[:128*5],integ_multi[:128*5])
+
+ 
+ex = 25*exponential(0.5,t) #Aumentamos la amplitud de las exponenciales
+pc=[]
+maxim2=[]
+#Gather the maximum and cut points
+for i in range (6):
+    cut = cut_points(ex,integ_multi)
+    m= next_max(integ_multi,cut)
+    altura = integ_multi[m]*1.05
+    ex = altura*exponential(0.5,t[0:128*5]-t[cut])
+    pc+=[cut]
+    maxim2+=[m]
+    #plt.plot(t[m:128*5],ex[m:128*5])
+    
+#Plot
+
+for i in range (0,5):
+    altura = integ_multi[maxim2[i]]*1.05
+    ex = altura*exponential(0.5,t[0:128*5]-t[pc[i]])
+    plt.plot(t[maxim2[i]:pc[i+1]],ex[maxim2[i]:pc[i+1]])
+plt.title("ECG multiderivación + exponenciales")
+plt.xlabel('Tiempo (s)')
+plt.ylabel('mV')
